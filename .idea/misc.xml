@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="app/src/main/res/drawable/circular_progress.xml" value="0.2984375" />
+        <entry key="app/src/main/res/drawable/correct_answer_btn.xml" value="0.2984375" />
+        <entry key="app/src/main/res/drawable/dark_bg.xml" value="0.2984375" />
+        <entry key="app/src/main/res/drawable/ic_close_btn_background.xml" value="0.2984375" />
+        <entry key="app/src/main/res/drawable/incorrect_answer_btn.xml" value="0.2984375" />
+        <entry key="app/src/main/res/drawable/login_progress.xml" value="0.29384615384615387" />
+        <entry key="app/src/main/res/drawable/outline_btn_bg.xml" value="0.2984375" />
+        <entry key="app/src/main/res/drawable/primary_btn_bg.xml" value="0.2984375" />
+        <entry key="app/src/main/res/layout-v23/single_list_item.xml" value="0.28229166666666666" />
+        <entry key="app/src/main/res/layout-v28/fragment_result.xml" value="0.28229166666666666" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1503623188405797" />
+        <entry key="app/src/main/res/layout/demo.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_details.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_list.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/fragment_quiz.xml" value="0.29214343615373806" />
+        <entry key="app/src/main/res/layout/fragment_register.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_result.xml" value="0.2869055258541145" />
+        <entry key="app/src/main/res/layout/fragment_scrolling.xml" value="0.1503623188405797" />
+        <entry key="app/src/main/res/layout/fragment_start.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/layout_dialog.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/login_demo.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/register_demo.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/single_list_item.xml" value="0.25" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

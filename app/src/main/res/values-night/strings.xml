@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Quiz App</string>
+    <string name="initializing">initializing…</string>
+    <string name="demo_description">Image Place Holder</string>
+    <string name="demo_quiz_description">Quiz Description</string>
+    <string name="demo_difficulty">Difficulty</string>
+    <string name="demo_show_more">Show More</string>
+    <string name="demo_show_less">Read Less</string>
+    <string name="demo_quiz_title">Quiz Title</string>
+    <string name="demo_view_quiz">view quiz</string>
+    <string name="content_description">content description</string>
+    <string name="quiz_description">Quiz Description</string>
+    <string name="total_questions">Total Questions</string>
+    <string name="quiz_title">Quiz Title</string>
+    <string name="your_last_score">Your Last Score</string>
+    <string name="n_a">N/A</string>
+    <string name="start_quiz">Start Quiz</string>
+    <string name="loading_quiz">Loading Quiz…</string>
+    <string name="questions">Question</string>
+    <string name="_0">0</string>
+    <string name="_10">10</string>
+    <string name="fetching_data">Fetching Data…</string>
+    <string name="option_button">Option Button</string>
+    <string name="next_question">Next Question</string>
+    <string name="checking_answer">Checking Answer…</string>
+    <string name="results">Results</string>
+    <string name="_100">100%</string>
+    <string name="correct_answers">Correct Answers</string>
+    <string name="wrong_answers">Wrong Answers</string>
+    <string name="questions_missed">Questions Missed</string>
+    <string name="back_to_home">Back To Home</string>
+</resources>
