@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterFragment extends Fragment implements View.OnClickListener {
@@ -91,22 +92,18 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
                 if(TextUtils.isEmpty(email)) {
                     feedbackText.setText("Email cannot be empty");
-                    feedbackText.setTextColor(Color.RED);
                     feedbackText.setVisibility(View.VISIBLE);
                     regEmail.requestFocus();
                 } else if(TextUtils.isEmpty(password)) {
                     feedbackText.setText("Password cannot be empty");
-                    feedbackText.setTextColor(Color.RED);
                     feedbackText.setVisibility(View.VISIBLE);
                     regPassword.requestFocus();
                 } else if(!(password.equals(confirm_password))) {
                     feedbackText.setText("Passwords do not match");
-                    feedbackText.setTextColor(Color.RED);
                     feedbackText.setVisibility(View.VISIBLE);
                     regConfirmPass.requestFocus();
                 } else if(!(email.contains("@"))) {
                     feedbackText.setText("Please enter a valid Email address");
-                    feedbackText.setTextColor(Color.RED);
                     feedbackText.setVisibility(View.VISIBLE);
                     regEmail.requestFocus();
                 } else {
@@ -121,9 +118,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 register_btn.setEnabled(true);
 
-                                feedbackText.setText(task.getException().toString());
-                                feedbackText.setTextColor(Color.RED);
-                                feedbackText.setVisibility(View.VISIBLE);
+                                if(task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                    feedbackText.setText("email already in use");
+                                    feedbackText.setVisibility(View.VISIBLE);
+                                }
                             }
                         }
                     });
