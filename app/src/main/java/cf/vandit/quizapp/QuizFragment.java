@@ -205,7 +205,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener{
                 unanswered++;
                 quiz_question_feedback.setVisibility(View.VISIBLE);
                 quiz_question_feedback.setText("Time's Up!");
-                quiz_question_feedback.setTextColor(getResources().getColor(R.color.yellow));
+                quiz_question_feedback.setTextColor(Color.YELLOW);
                 if(currentQuestion == totalQuestions) {
                     next_btn.setText("Submit Results");
                 }
