@@ -1,33 +1,42 @@
 package cf.vandit.quizapp;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 public class StartFragment extends Fragment implements View.OnClickListener{
 
@@ -36,6 +45,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
     private TextInputEditText logEmail, logPassword;
     private Button login_btn;
     private ProgressBar progressBar;
+    private ConstraintLayout constraintLayout;
 
     // firebase authentication
     private FirebaseAuth firebaseAuth;
@@ -72,6 +82,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
         forgot_password.setOnClickListener(this);
 
         progressBar = view.findViewById(R.id.start_progressBar);
+        constraintLayout = view.findViewById(R.id.login_root_layout);
     }
 
     @Override
@@ -81,8 +92,13 @@ public class StartFragment extends Fragment implements View.OnClickListener{
         if(currentUser == null) {
             loginUser();
         } else {
-            // navigate to home page
-            navController.navigate(R.id.action_startFragment_to_listFragment);
+            if(currentUser.isEmailVerified()) {
+                // navigate to home page
+                navController.navigate(R.id.action_startFragment_to_listFragment);
+            } else {
+                showAlertDialog();
+                firebaseAuth.signOut();
+            }
         }
     }
 
@@ -113,7 +129,15 @@ public class StartFragment extends Fragment implements View.OnClickListener{
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()) {
-                                navController.navigate(R.id.action_startFragment_to_listFragment);
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                if(user.isEmailVerified()) {
+                                    navController.navigate(R.id.action_startFragment_to_listFragment);
+                                } else if(!user.isEmailVerified()) {
+                                    showAlertDialog();
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    login_btn.setEnabled(true);
+                                    firebaseAuth.signOut();
+                                }
                             } else {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 login_btn.setEnabled(true);
@@ -124,7 +148,11 @@ public class StartFragment extends Fragment implements View.OnClickListener{
                                 } else if(task.getException() instanceof FirebaseAuthInvalidUserException) {
                                     feedbackText.setText("User does not exist");
                                     feedbackText.setVisibility(View.VISIBLE);
-                                } else {
+                                } else if(task.getException() instanceof FirebaseTooManyRequestsException) {
+                                    feedbackText.setText("We have blocked all the requests from this device due to unusual activity. \n\n try again later");
+                                    feedbackText.setVisibility(View.VISIBLE);
+                                }
+                                else {
                                     feedbackText.setText(task.getException().toString());
                                     feedbackText.setVisibility(View.VISIBLE);
                                 }
@@ -144,5 +172,48 @@ public class StartFragment extends Fragment implements View.OnClickListener{
             ResetPassDialog resetPassDialog = new ResetPassDialog();
             resetPassDialog.show(getFragmentManager(), "Password Reset");
         }
+    }
+
+    private void showAlertDialog() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(getActivity());
+        alertDialogBuilder.setTitle("Email Verification");
+        alertDialogBuilder.setMessage("Please verify the Email sent to: \n " + user.getEmail());
+        alertDialogBuilder.setPositiveButton("Verify Email", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent emailIntent = new Intent(Intent.ACTION_MAIN);
+                emailIntent.addCategory(Intent.CATEGORY_APP_EMAIL);
+                emailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(Intent.createChooser(emailIntent, "Email"));
+            }
+        });
+        alertDialogBuilder.setNegativeButton("Resend Email", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Snackbar snackbar = Snackbar.make(constraintLayout, "Verification Email Sent", Snackbar.LENGTH_LONG);
+                            snackbar.setTextColor(Color.BLACK);
+                            snackbar.setBackgroundTint(Color.WHITE);
+                            snackbar.setAction("ok", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    snackbar.dismiss();
+                                }
+                            });
+                            snackbar.setActionTextColor(Color.parseColor("#9875CB"));
+                            snackbar.show();
+                        } else {
+                            feedbackText.setText(task.getException().toString());
+                            feedbackText.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+            }
+        });
+        alertDialogBuilder.show();
     }
 }

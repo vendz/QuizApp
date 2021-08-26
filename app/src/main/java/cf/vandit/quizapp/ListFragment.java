@@ -58,10 +58,6 @@ public class ListFragment extends Fragment implements QuizListAdapter.OnQuizList
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        if(firebaseAuth.getCurrentUser() == null) {
-            navController.navigate(R.id.action_listFragment_to_startFragment);
-        }
-
         recyclerView = view.findViewById(R.id.recyclerView);
         progressBar = view.findViewById(R.id.list_progress);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
@@ -79,7 +75,7 @@ public class ListFragment extends Fragment implements QuizListAdapter.OnQuizList
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        //TODO: work on this as it is downloading data from somewhere-else
+        //TODO: work on this, as this is made using MVVM architecture, the data is downloaded from another file
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

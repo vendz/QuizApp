@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -17,9 +18,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +36,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private TextInputEditText regEmail, regPassword, regConfirmPass;
     private Button register_btn;
     private ProgressBar progressBar;
+    private ConstraintLayout rootLayout;
 
     // firebase authentication
     private FirebaseAuth firebaseAuth;
@@ -67,6 +71,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         login_now_btn = view.findViewById(R.id.login_now_btn);
         login_now_btn.setOnClickListener(this);
         progressBar = view.findViewById(R.id.register_progressBar);
+        rootLayout = view.findViewById(R.id.register_root_layout);
     }
 
     @Override
@@ -76,8 +81,16 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         if(currentUser == null) {
             registerUser();
         } else {
-            // navigate to home page
-            navController.navigate(R.id.action_registerFragment_to_listFragment);
+            if(currentUser.isEmailVerified()) {
+                // navigate to home page
+                navController.navigate(R.id.action_registerFragment_to_listFragment);
+            } else {
+                Snackbar snackbar = Snackbar.make(rootLayout, "Email is not verified", Snackbar.LENGTH_LONG);
+                snackbar.setBackgroundTint(Color.WHITE);
+                snackbar.setTextColor(Color.BLACK);
+                snackbar.show();
+                firebaseAuth.signOut();
+            }
         }
     }
 
@@ -113,7 +126,33 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()) {
-                                navController.navigate(R.id.action_registerFragment_to_listFragment);
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+                                assert user != null;
+                                user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()) {
+                                            Snackbar snackbar = Snackbar.make(rootLayout, "Verification Email Sent", Snackbar.LENGTH_LONG);
+                                            snackbar.setBackgroundTint(Color.WHITE);
+                                            snackbar.setTextColor(Color.BLACK);
+                                            snackbar.setAction("ok", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    snackbar.dismiss();
+                                                }
+                                            });
+                                            snackbar.setActionTextColor(Color.parseColor("#9875CB"));
+                                            snackbar.show();
+
+                                            progressBar.setVisibility(View.INVISIBLE);
+                                            register_btn.setEnabled(true);
+                                        } else {
+                                            feedbackText.setText(task.getException().toString());
+                                            feedbackText.setVisibility(View.VISIBLE);
+                                        }
+//                                        navController.navigate(R.id.action_registerFragment_to_listFragment);
+                                    }
+                                });
                             } else {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 register_btn.setEnabled(true);
