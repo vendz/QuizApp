@@ -5,13 +5,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,7 +33,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener{
     private FirebaseFirestore firebaseFirestore;
     private String QuizID;
 
-    private String currentUserID;
+    private String currentEmailID;
     private FirebaseAuth firebaseAuth;
 
     private List<QuestionsModel> allQuestionsList = new ArrayList<>();
@@ -89,7 +86,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener{
 
         // get UserID
         if(firebaseAuth.getCurrentUser() != null) {
-            currentUserID = firebaseAuth.getCurrentUser().getUid();
+            currentEmailID = firebaseAuth.getCurrentUser().getEmail();
         } else {
             // go back to homePage
             navController.navigate(R.id.action_quizFragment_to_startFragment);
@@ -269,7 +266,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener{
 
         firebaseFirestore.collection("QuizList")
                 .document(QuizID).collection("Results")
-                .document(currentUserID).set(resultMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                .document(currentEmailID).set(resultMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()) {

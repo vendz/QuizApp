@@ -88,9 +88,9 @@ public class ResultFragment extends Fragment {
                         Long incorrect = result.getLong("incorrect");
                         Long missed = result.getLong("unanswered");
 
-                        correctAnswers.setText(correct.toString());
-                        incorrectAnswers.setText(incorrect.toString());
-                        missedAnswers.setText(missed.toString());
+                        correctAnswers.setText(String.valueOf(correct));
+                        incorrectAnswers.setText(String.valueOf(incorrect));
+                        missedAnswers.setText(String.valueOf(missed));
 
                         // calculate progress
                         Long total = correct + incorrect + missed;

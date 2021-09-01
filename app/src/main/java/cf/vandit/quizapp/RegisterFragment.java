@@ -176,12 +176,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
                 if(TextUtils.isEmpty(email)) {
                     regEmailLayout.setError(getString(R.string.empty_email_error));
+                } else if(!(email.contains("@"))) {
+                    regEmailLayout.setError(getString(R.string.invalid_email_error));
                 } else if(TextUtils.isEmpty(password)) {
                     regPasswordLayout.setError(getString(R.string.empty_password_error));
                 } else if(!(password.equals(confirm_password))) {
                     regConfirmPassLayout.setError(getString(R.string.passwords_unmatch_error));
-                } else if(!(email.contains("@"))) {
-                    regEmailLayout.setError(getString(R.string.invalid_email_error));
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     register_btn.setEnabled(false);

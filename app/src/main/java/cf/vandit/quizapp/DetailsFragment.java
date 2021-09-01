@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.util.Log;
@@ -118,7 +119,7 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
         // fetch score data
         firebaseFirestore.collection("QuizList")
                 .document(quizID).collection("Results")
-                .document(firebaseAuth.getCurrentUser().getUid())
+                .document(firebaseAuth.getCurrentUser().getEmail())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -147,7 +148,7 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
             action.setTotalQuestions(totalQuestions);
             action.setQuizID(quizID);
             action.setQuizName(quizName);
-            navController.navigate(action);
+            navController.navigate((NavDirections) action);
         }
     }
 }
