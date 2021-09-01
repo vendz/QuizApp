@@ -31,7 +31,7 @@ public class ResultFragment extends Fragment {
 
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
-    private String currentUserID;
+    private String userEmailID;
     private NavController navController;
 
     public ResultFragment() {
@@ -69,7 +69,7 @@ public class ResultFragment extends Fragment {
 
         // get UserID
         if(firebaseAuth.getCurrentUser() != null) {
-            currentUserID = firebaseAuth.getCurrentUser().getUid();
+            userEmailID = firebaseAuth.getCurrentUser().getEmail();
         } else {
             navController.navigate(R.id.action_resultFragment_to_listFragment);
         }
@@ -78,7 +78,7 @@ public class ResultFragment extends Fragment {
 
         firebaseFirestore.collection("QuizList")
                 .document(quizID).collection("Results")
-                .document(currentUserID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .document(userEmailID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){

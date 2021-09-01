@@ -6,18 +6,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StartFragment"
+    tools:context=".LoginFragment"
     android:background="@color/dark_grey"
     android:fitsSystemWindows="true">
+
+    <View
+        android:id="@+id/topView"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:background="@color/accent_blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/waveView"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:background="@drawable/wave"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topView" />
 
     <TextView
         android:id="@+id/start_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:fontFamily="@font/crimson_text"
         android:text="@string/app_name"
-        android:textColor="@color/accent_blue"
+        android:textColor="@color/white"
         android:textFontWeight="700"
         android:textSize="52sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="24dp"
         android:text="TextView"
         android:textAlignment="center"
@@ -45,22 +64,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="150dp"
         android:layout_marginEnd="32dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.TextInputLayout.Rounded"
         android:textColorHint="@color/white"
         app:boxStrokeColor="@color/white"
         app:hintTextColor="@color/white"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_title"
-        app:startIconDrawable="@drawable/ic_baseline_mail_outline_24"
-        app:startIconTint="@color/white">
+        app:startIconDrawable="@drawable/ic_mail"
+        app:startIconTint="@color/white"
+        app:errorEnabled="true"
+        android:hint="Email">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/logEmailInputField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
             android:inputType="textEmailAddress"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -71,8 +94,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.TextInputLayout.Rounded"
         android:textColorHint="@color/white"
         app:boxStrokeColor="@color/white"
         app:endIconMode="password_toggle"
@@ -81,14 +105,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logEmailInputLayout"
-        app:startIconDrawable="@drawable/ic_outline_lock_24"
-        app:startIconTint="@color/white">
+        app:startIconDrawable="@drawable/ic_lock"
+        app:startIconTint="@color/white"
+        app:errorEnabled="true"
+        android:hint="Password">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/logPasswordInputField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
             android:inputType="textPassword"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -100,6 +125,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="40dp"
         android:layout_marginEnd="32dp"
+        android:background="@drawable/round_bg"
         android:text="Login"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"

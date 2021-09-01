@@ -43,7 +43,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="24dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_outline_logout_24" />
+                android:src="@drawable/ic_logout" />
 
         </RelativeLayout>
     </com.google.android.material.appbar.AppBarLayout>

@@ -3,22 +3,20 @@ package cf.vandit.quizapp;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -29,31 +27,37 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
-public class StartFragment extends Fragment implements View.OnClickListener{
+public class LoginFragment extends Fragment implements View.OnClickListener{
 
     // UI element
     private TextView feedbackText, register_now_btn, forgot_password;
     private TextInputEditText logEmail, logPassword;
+    private TextInputLayout logEmailLayout, logPasswordLayout;
     private Button login_btn;
     private ProgressBar progressBar;
     private ConstraintLayout constraintLayout;
 
-    // firebase authentication
+    // firebase
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore firebaseFirestore;
 
     // initialize NavController
     private NavController navController;
 
-    public StartFragment() {
+    public LoginFragment() {
         // Required empty public constructor
     }
 
@@ -61,7 +65,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_start, container, false);
+        return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
     @Override
@@ -69,12 +73,15 @@ public class StartFragment extends Fragment implements View.OnClickListener{
         super.onViewCreated(view, savedInstanceState);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         navController = Navigation.findNavController(view);
 
         feedbackText = view.findViewById(R.id.start_feedback_text);
         logEmail = view.findViewById(R.id.logEmailInputField);
         logPassword = view.findViewById(R.id.logPasswordInputField);
+        logEmailLayout = view.findViewById(R.id.logEmailInputLayout);
+        logPasswordLayout = view.findViewById(R.id.logPasswordInputLayout);
         login_btn = view.findViewById(R.id.login_Button);
         register_now_btn = view.findViewById(R.id.register_now_btn);
         register_now_btn.setOnClickListener(this);
@@ -83,6 +90,46 @@ public class StartFragment extends Fragment implements View.OnClickListener{
 
         progressBar = view.findViewById(R.id.start_progressBar);
         constraintLayout = view.findViewById(R.id.login_root_layout);
+
+        logEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(!TextUtils.isEmpty(logEmail.getText().toString().trim())) {
+                    if(logEmailLayout.getError() == getString(R.string.empty_email_error)) {
+                        logEmailLayout.setError(null);
+                    }
+                }
+
+                if(logEmail.getText().toString().trim().contains("@")) {
+                    if(logEmailLayout.getError() == getString(R.string.invalid_email_error)) {
+                        logEmailLayout.setError(null);
+                    }
+                }
+            }
+        });
+
+        logPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(!TextUtils.isEmpty(logPassword.getText())) {
+                    if(logPasswordLayout.getError() == getString(R.string.empty_password_error)) {
+                        logPasswordLayout.setError(null);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -107,21 +154,15 @@ public class StartFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View view) {
                 feedbackText.setVisibility(View.INVISIBLE);
-                String email = logEmail.getText().toString();
-                String password = logPassword.getText().toString();
+                String email = logEmail.getText().toString().trim();
+                String password = logPassword.getText().toString().trim();
 
                 if(TextUtils.isEmpty(email)) {
-                    feedbackText.setText("Email cannot be empty");
-                    feedbackText.setVisibility(View.VISIBLE);
-                    logEmail.requestFocus();
+                    logEmailLayout.setError(getString(R.string.empty_email_error));
                 } else if(TextUtils.isEmpty(password)) {
-                    feedbackText.setText("Password cannot be empty");
-                    feedbackText.setVisibility(View.VISIBLE);
-                    logPassword.requestFocus();
+                    logPasswordLayout.setError(getString(R.string.empty_password_error));
                 } else if(!(email.contains("@"))) {
-                    feedbackText.setText("Please enter a valid Email address");
-                    feedbackText.setVisibility(View.VISIBLE);
-                    logEmail.requestFocus();
+                    logEmailLayout.setError(getString(R.string.invalid_email_error));
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     login_btn.setEnabled(false);
@@ -131,6 +172,25 @@ public class StartFragment extends Fragment implements View.OnClickListener{
                             if(task.isSuccessful()) {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 if(user.isEmailVerified()) {
+                                    // fetch user FCM token
+                                    final String[] token = new String[1];
+                                    FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<String> task) {
+                                            if(task.isSuccessful()) {
+                                                token[0] = task.getResult();
+
+                                                // add user to database
+                                                Map<String, Object> new_user = new HashMap<>();
+                                                new_user.put("email", user.getEmail());
+                                                new_user.put("token", token[0]);
+                                                new_user.put("is_admin", false);
+
+                                                firebaseFirestore.collection("users").document(user.getEmail()).set(new_user);
+                                            }
+                                        }
+                                    });
+
                                     navController.navigate(R.id.action_startFragment_to_listFragment);
                                 } else if(!user.isEmailVerified()) {
                                     showAlertDialog();

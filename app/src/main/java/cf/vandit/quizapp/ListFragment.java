@@ -1,6 +1,14 @@
 package cf.vandit.quizapp;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,14 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
-
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class ListFragment extends Fragment implements QuizListAdapter.OnQuizList
     private SwipeRefreshLayout swipeRefreshLayout;
     private ImageButton logout_btn;
 
-    FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth;
 
     private NavController navController;
 
@@ -123,8 +124,20 @@ public class ListFragment extends Fragment implements QuizListAdapter.OnQuizList
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.logout_btn) {
-            firebaseAuth.signOut();
-            navController.navigate(R.id.action_listFragment_to_startFragment);
+            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(getActivity());
+            alertDialogBuilder.setMessage("are you sure you want to logout?");
+            alertDialogBuilder.setPositiveButton("logout", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    firebaseAuth.signOut();
+                    navController.navigate(R.id.action_listFragment_to_startFragment);
+                }
+            });
+            alertDialogBuilder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {}
+            });
+            alertDialogBuilder.show();
         }
     }
 }

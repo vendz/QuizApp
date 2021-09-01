@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/startFragment"
-        android:name="cf.vandit.quizapp.StartFragment"
+        android:name="cf.vandit.quizapp.LoginFragment"
         android:label="fragment_start"
-        tools:layout="@layout/fragment_start" >
+        tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_startFragment_to_listFragment"
             app:destination="@id/listFragment"

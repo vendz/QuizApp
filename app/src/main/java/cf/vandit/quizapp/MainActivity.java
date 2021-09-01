@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements ResetPassListener
                     Toast.makeText(getApplicationContext(), "Password Reset Email Sent", Toast.LENGTH_LONG).show();
                 } else {
                     feedbackText.setText(task.getException().toString());
-                    feedbackText.setTextColor(Color.RED);
                     feedbackText.setVisibility(View.VISIBLE);
                 }
             }

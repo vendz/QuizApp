@@ -10,7 +10,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,22 +26,30 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterFragment extends Fragment implements View.OnClickListener {
 
     // UI element
     private TextView feedbackText, login_now_btn;
     private TextInputEditText regEmail, regPassword, regConfirmPass;
+    private TextInputLayout regEmailLayout, regPasswordLayout, regConfirmPassLayout;
     private Button register_btn;
     private ProgressBar progressBar;
     private ConstraintLayout rootLayout;
 
     // firebase authentication
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore firebaseFirestore;
 
     // initialize NavController
     private NavController navController;
@@ -60,6 +70,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         navController = Navigation.findNavController(view);
 
@@ -67,11 +78,71 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         regEmail = view.findViewById(R.id.regEmailInputField);
         regPassword = view.findViewById(R.id.regPassInputField);
         regConfirmPass = view.findViewById(R.id.regConfirmPassInputField);
+        regEmailLayout = view.findViewById(R.id.regEmailInputLayout);
+        regPasswordLayout = view.findViewById(R.id.regPassInputLayout);
+        regConfirmPassLayout = view.findViewById(R.id.regConfirmPassInputLayout);
         register_btn = view.findViewById(R.id.register_button);
         login_now_btn = view.findViewById(R.id.login_now_btn);
         login_now_btn.setOnClickListener(this);
         progressBar = view.findViewById(R.id.register_progressBar);
         rootLayout = view.findViewById(R.id.register_root_layout);
+
+        regEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(!TextUtils.isEmpty(regEmail.getText().toString().trim())) {
+                    if(regEmailLayout.getError() == getString(R.string.empty_email_error)) {
+                        regEmailLayout.setError(null);
+                    }
+                }
+
+                if(regEmail.getText().toString().trim().contains("@")) {
+                    if(regEmailLayout.getError() == getString(R.string.invalid_email_error)) {
+                        regEmailLayout.setError(null);
+                    }
+                }
+            }
+        });
+
+        regPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(!TextUtils.isEmpty(regPassword.getText())) {
+                    if(regPasswordLayout.getError() == getString(R.string.empty_password_error)) {
+                        regPasswordLayout.setError(null);
+                    }
+                }
+            }
+        });
+
+        regConfirmPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(regPassword.getText().toString().trim().equals(regConfirmPass.getText().toString().trim())) {
+                    if(regConfirmPassLayout.getError() == getString(R.string.passwords_unmatch_error)) {
+                        regConfirmPassLayout.setError(null);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -99,26 +170,18 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 feedbackText.setVisibility(View.INVISIBLE);
-                String email = regEmail.getText().toString();
-                String password = regPassword.getText().toString();
-                String confirm_password = regConfirmPass.getText().toString();
+                String email = regEmail.getText().toString().trim();
+                String password = regPassword.getText().toString().trim();
+                String confirm_password = regConfirmPass.getText().toString().trim();
 
                 if(TextUtils.isEmpty(email)) {
-                    feedbackText.setText("Email cannot be empty");
-                    feedbackText.setVisibility(View.VISIBLE);
-                    regEmail.requestFocus();
+                    regEmailLayout.setError(getString(R.string.empty_email_error));
                 } else if(TextUtils.isEmpty(password)) {
-                    feedbackText.setText("Password cannot be empty");
-                    feedbackText.setVisibility(View.VISIBLE);
-                    regPassword.requestFocus();
+                    regPasswordLayout.setError(getString(R.string.empty_password_error));
                 } else if(!(password.equals(confirm_password))) {
-                    feedbackText.setText("Passwords do not match");
-                    feedbackText.setVisibility(View.VISIBLE);
-                    regConfirmPass.requestFocus();
+                    regConfirmPassLayout.setError(getString(R.string.passwords_unmatch_error));
                 } else if(!(email.contains("@"))) {
-                    feedbackText.setText("Please enter a valid Email address");
-                    feedbackText.setVisibility(View.VISIBLE);
-                    regEmail.requestFocus();
+                    regEmailLayout.setError(getString(R.string.invalid_email_error));
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     register_btn.setEnabled(false);
@@ -132,6 +195,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()) {
+
                                             Snackbar snackbar = Snackbar.make(rootLayout, "Verification Email Sent", Snackbar.LENGTH_LONG);
                                             snackbar.setBackgroundTint(Color.WHITE);
                                             snackbar.setTextColor(Color.BLACK);

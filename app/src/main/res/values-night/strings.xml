@@ -30,4 +30,7 @@
     <string name="wrong_answers">Wrong Answers</string>
     <string name="questions_missed">Questions Missed</string>
     <string name="back_to_home">Back To Home</string>
+    <string name="empty_email_error">Email cannot be empty</string>
+    <string name="invalid_email_error">Please enter a valid Email</string>
+    <string name="empty_password_error">Password cannot be empty</string>
 </resources>
