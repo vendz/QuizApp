@@ -203,11 +203,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                                 login_btn.setEnabled(true);
 
                                 if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                    feedbackText.setText("Incorrect Password");
-                                    feedbackText.setVisibility(View.VISIBLE);
+                                    logEmailLayout.setError(null);
+                                    logPasswordLayout.setError("Incorrect Password");
                                 } else if(task.getException() instanceof FirebaseAuthInvalidUserException) {
-                                    feedbackText.setText("User does not exist");
-                                    feedbackText.setVisibility(View.VISIBLE);
+                                    logPasswordLayout.setError(null);
+                                    logEmailLayout.setError("User does not exist");
                                 } else if(task.getException() instanceof FirebaseTooManyRequestsException) {
                                     feedbackText.setText("We have blocked all the requests from this device due to unusual activity. \n\n try again later");
                                     feedbackText.setVisibility(View.VISIBLE);

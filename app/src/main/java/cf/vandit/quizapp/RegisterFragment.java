@@ -195,7 +195,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()) {
-
                                             Snackbar snackbar = Snackbar.make(rootLayout, "Verification Email Sent", Snackbar.LENGTH_LONG);
                                             snackbar.setBackgroundTint(Color.WHITE);
                                             snackbar.setTextColor(Color.BLACK);
@@ -214,7 +213,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                                             feedbackText.setText(task.getException().toString());
                                             feedbackText.setVisibility(View.VISIBLE);
                                         }
-//                                        navController.navigate(R.id.action_registerFragment_to_listFragment);
                                     }
                                 });
                             } else {
@@ -222,8 +220,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                                 register_btn.setEnabled(true);
 
                                 if(task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                    feedbackText.setText("email already in use");
-                                    feedbackText.setVisibility(View.VISIBLE);
+                                    regEmailLayout.setError("Email already in use");
+                                    regPasswordLayout.setError(null);
+                                    regConfirmPassLayout.setError(null);
                                 }
                             }
                         }
