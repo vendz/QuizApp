@@ -1,14 +1,24 @@
 package cf.vandit.quizapp;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,19 +31,28 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
-public class ListFragment extends Fragment implements QuizListAdapter.OnQuizListItemClicked, View.OnClickListener {
+public class ListFragment extends Fragment implements QuizListAdapter.OnQuizListItemClicked, View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ImageButton logout_btn;
+    private ImageButton menu_btn;
+    private PopupMenu popupMenu;
+
+    private boolean is_admin;
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore firebaseFirestore;
 
     private NavController navController;
 
@@ -58,12 +77,13 @@ public class ListFragment extends Fragment implements QuizListAdapter.OnQuizList
         super.onViewCreated(view, savedInstanceState);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         recyclerView = view.findViewById(R.id.recyclerView);
         progressBar = view.findViewById(R.id.list_progress);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
-        logout_btn = view.findViewById(R.id.logout_btn);
-        logout_btn.setOnClickListener(this);
+        menu_btn = view.findViewById(R.id.menu_btn);
+        menu_btn.setOnClickListener(this);
 
         navController = Navigation.findNavController(view);
 
@@ -95,6 +115,20 @@ public class ListFragment extends Fragment implements QuizListAdapter.OnQuizList
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+
+        // check if user is admin
+        DocumentReference documentReference = firebaseFirestore.collection("users").document(firebaseAuth.getCurrentUser().getEmail());
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if(documentSnapshot.exists()) {
+                        is_admin = (boolean) documentSnapshot.get("is_admin");
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -123,21 +157,55 @@ public class ListFragment extends Fragment implements QuizListAdapter.OnQuizList
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.logout_btn) {
-            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(getActivity());
-            alertDialogBuilder.setMessage("are you sure you want to logout?");
-            alertDialogBuilder.setPositiveButton("logout", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    firebaseAuth.signOut();
-                    navController.navigate(R.id.action_listFragment_to_startFragment);
-                }
-            });
-            alertDialogBuilder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {}
-            });
-            alertDialogBuilder.show();
+        if(view.getId() == R.id.menu_btn) {
+            Context wrapper = new ContextThemeWrapper(getActivity(), R.style.MyPopupOtherStyle);
+            popupMenu = new PopupMenu(wrapper, view);
+            popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
+            popupMenu.inflate(R.menu.popup_menu);
+
+            if(!is_admin) {
+                Menu popup = popupMenu.getMenu();
+                popup.findItem(R.id.menu_new_quiz).setVisible(false);
+            }
+
+            popupMenu.show();
         }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.menu_profile:
+                Toast.makeText(getActivity(), "Profile", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menu_new_quiz:
+                Toast.makeText(getActivity(), "New Quiz", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menu_about:
+                Toast.makeText(getActivity(), "About", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menu_logout:
+                menuLogoutBtn();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public void menuLogoutBtn() {
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(getActivity());
+        alertDialogBuilder.setMessage("are you sure you want to logout?");
+        alertDialogBuilder.setPositiveButton("logout", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                firebaseAuth.signOut();
+                navController.navigate(R.id.action_listFragment_to_startFragment);
+            }
+        });
+        alertDialogBuilder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {}
+        });
+        alertDialogBuilder.show();
     }
 }

@@ -55,7 +55,8 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.QuizVi
             holder.description.setText(listdesc + "...");
         }
         else {
-            holder.showMore.setText(quizListModels.get(position).getDescription());
+            holder.description.setText(quizListModels.get(position).getDescription());
+            holder.showMore.setVisibility(View.INVISIBLE);
         }
 
         String finalListdesc = listdesc;

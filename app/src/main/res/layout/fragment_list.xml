@@ -6,21 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ListFragment"
+    android:fitsSystemWindows="true"
     android:background="@color/dark_grey">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:fitsSystemWindows="true"
-        android:background="#1e222f">
+        android:background="@color/dark_grey">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/appBar_title"
@@ -28,22 +29,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
                 android:fontFamily="@font/work_sans"
                 android:text="@string/app_name"
-                android:textColor="@color/accent_blue"
+                android:textColor="@color/white"
                 android:textFontWeight="600"
                 android:textSize="20sp" />
 
             <ImageButton
-                android:id="@+id/logout_btn"
+                android:id="@+id/menu_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="12dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginEnd="16dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_logout" />
+                android:src="@drawable/ic_more_verticle" />
 
         </RelativeLayout>
     </com.google.android.material.appbar.AppBarLayout>

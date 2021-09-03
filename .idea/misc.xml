@@ -12,6 +12,8 @@
         <entry key="app/src/main/res/drawable/ic_error.xml" value="0.29384615384615387" />
         <entry key="app/src/main/res/drawable/ic_eye.xml" value="0.29384615384615387" />
         <entry key="app/src/main/res/drawable/ic_lock.xml" value="0.1935185185185185" />
+        <entry key="app/src/main/res/drawable/ic_menu.xml" value="0.29384615384615387" />
+        <entry key="app/src/main/res/drawable/ic_more_verticle.xml" value="0.29384615384615387" />
         <entry key="app/src/main/res/drawable/ic_person.xml" value="0.1935185185185185" />
         <entry key="app/src/main/res/drawable/incorrect_answer_btn.xml" value="0.2984375" />
         <entry key="app/src/main/res/drawable/login_progress.xml" value="0.29384615384615387" />
@@ -25,10 +27,11 @@
         <entry key="app/src/main/res/layout/activity_email.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1503623188405797" />
         <entry key="app/src/main/res/layout/activity_splash_screen.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/demo.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/demo.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/demo_nav_header.xml" value="0.13728470111448834" />
         <entry key="app/src/main/res/layout/dmeo.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_details.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_list.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/fragment_list.xml" value="0.24380649716875735" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_quiz.xml" value="0.29214343615373806" />
         <entry key="app/src/main/res/layout/fragment_register.xml" value="0.25" />
@@ -39,6 +42,10 @@
         <entry key="app/src/main/res/layout/login_demo.xml" value="0.25" />
         <entry key="app/src/main/res/layout/register_demo.xml" value="0.25" />
         <entry key="app/src/main/res/layout/single_list_item.xml" value="0.25" />
+        <entry key="app/src/main/res/menu/list_fragment_menu.xml" value="0.28229166666666666" />
+        <entry key="app/src/main/res/menu/menu.xml" value="0.27794871794871795" />
+        <entry key="app/src/main/res/menu/navigation_drawer.xml" value="0.3185594130593168" />
+        <entry key="app/src/main/res/menu/popup_menu.xml" value="0.225" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.22407407407407406" />
       </map>
     </option>
