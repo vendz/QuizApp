@@ -34,4 +34,6 @@
     <string name="invalid_email_error">Please enter a valid Email</string>
     <string name="empty_password_error">Password cannot be empty</string>
     <string name="passwords_unmatch_error">Passwords do not match</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

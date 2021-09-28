@@ -254,7 +254,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener{
                 }
                 break;
             case R.id.quiz_close_btn:
-                navController.popBackStack();
+                getActivity().onBackPressed();
         }
     }
 

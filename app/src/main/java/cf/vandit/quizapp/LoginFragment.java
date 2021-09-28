@@ -1,7 +1,9 @@
 package cf.vandit.quizapp;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -35,6 +37,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -173,21 +177,36 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                             if(task.isSuccessful()) {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 if(user.isEmailVerified()) {
-                                    // fetch user FCM token
-                                    final String[] token = new String[1];
                                     FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
                                         @Override
                                         public void onComplete(@NonNull Task<String> task) {
-                                            if(task.isSuccessful()) {
-                                                token[0] = task.getResult();
+                                            if (task.isSuccessful()) {
+                                                String token = task.getResult();
 
-                                                // add user to database
-                                                Map<String, Object> new_user = new HashMap<>();
-                                                new_user.put("email", user.getEmail());
-                                                new_user.put("token", token[0]);
-                                                new_user.put("is_admin", false);
+                                                DocumentReference documentReference = firebaseFirestore.collection("users").document(firebaseAuth.getCurrentUser().getEmail());
+                                                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            DocumentSnapshot documentSnapshot = task.getResult();
+                                                            if(documentSnapshot.exists()) {
+                                                                boolean is_admin = (boolean) documentSnapshot.get("is_admin");
+                                                                String name = documentSnapshot.get("name").toString();
 
-                                                firebaseFirestore.collection("users").document(user.getEmail()).set(new_user);
+                                                                // adding user data to local database
+                                                                SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+                                                                SharedPreferences.Editor editor = preferences.edit();
+
+                                                                editor.putString("email", user.getEmail());
+                                                                editor.putString("token", token);
+                                                                editor.putBoolean("is_admin", is_admin);
+                                                                editor.putString("name", name);
+
+                                                                editor.apply();
+                                                            }
+                                                        }
+                                                    }
+                                                });
                                             }
                                         }
                                     });

@@ -36,6 +36,6 @@
         <!-- Used for the title and text -->
         <item name="android:textColorPrimary">@android:color/white</item>
         <!-- Used for the background -->
-        <item name="android:background">@color/dark_grey</item>
+        <item name="android:background">@color/app_bar_bg</item>
     </style>
 </resources>

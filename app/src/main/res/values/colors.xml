@@ -9,13 +9,14 @@
     <color name="white">#FFFFFFFF</color>
     <color name="yellow">#FFF500</color>
     <color name="orange">#FF3B00</color>
-    <color name="dark_grey">#1B202B</color>
+    <color name="dark_grey">#101d25</color>
     <color name="menu_bg">#2A3244</color>
-    <color name="light_grey">#929292</color>
+    <color name="light_grey">#969A9D</color>
     <color name="accent_blue">#0099ff</color>
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>
     <color name="logo_color">#1565C0</color>
+    <color name="app_bar_bg">#232D36</color>
 
     <color name="mtrl_textinput_default_box_stroke_color">#fff</color>
 </resources>

@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:fitsSystemWindows="true"
-        android:background="@color/dark_grey">
+        android:background="@color/app_bar_bg">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -31,8 +31,8 @@
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/work_sans"
                 android:text="@string/app_name"
-                android:textColor="@color/white"
-                android:textFontWeight="600"
+                android:textColor="@color/light_grey"
+                android:textFontWeight="900"
                 android:textSize="20sp" />
 
             <ImageButton
@@ -43,7 +43,8 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="16dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_more_verticle" />
+                android:src="@drawable/ic_more_verticle"
+                app:tint="@color/light_grey"/>
 
         </RelativeLayout>
     </com.google.android.material.appbar.AppBarLayout>
