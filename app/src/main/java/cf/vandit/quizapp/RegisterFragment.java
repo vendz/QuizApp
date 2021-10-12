@@ -182,6 +182,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     register_btn.setEnabled(false);
+                    login_now_btn.setEnabled(false);
                     firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -227,6 +228,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
                                             progressBar.setVisibility(View.INVISIBLE);
                                             register_btn.setEnabled(true);
+                                            login_now_btn.setEnabled(true);
                                         } else {
                                             feedbackText.setText(task.getException().toString());
                                             feedbackText.setVisibility(View.VISIBLE);
@@ -236,6 +238,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                             } else {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 register_btn.setEnabled(true);
+                                login_now_btn.setEnabled(true);
 
                                 if(task.getException() instanceof FirebaseAuthUserCollisionException) {
                                     regEmailLayout.setError("Email already in use");

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -41,9 +39,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class LoginFragment extends Fragment implements View.OnClickListener{
 
@@ -171,56 +166,25 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     login_btn.setEnabled(false);
+                    register_now_btn.setEnabled(false);
                     firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()) {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 if(user.isEmailVerified()) {
-                                    FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<String> task) {
-                                            if (task.isSuccessful()) {
-                                                String token = task.getResult();
-
-                                                DocumentReference documentReference = firebaseFirestore.collection("users").document(firebaseAuth.getCurrentUser().getEmail());
-                                                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                        if (task.isSuccessful()) {
-                                                            DocumentSnapshot documentSnapshot = task.getResult();
-                                                            if(documentSnapshot.exists()) {
-                                                                boolean is_admin = (boolean) documentSnapshot.get("is_admin");
-                                                                String name = documentSnapshot.get("name").toString();
-
-                                                                // adding user data to local database
-                                                                SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-                                                                SharedPreferences.Editor editor = preferences.edit();
-
-                                                                editor.putString("email", user.getEmail());
-                                                                editor.putString("token", token);
-                                                                editor.putBoolean("is_admin", is_admin);
-                                                                editor.putString("name", name);
-
-                                                                editor.apply();
-                                                            }
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    });
-
                                     navController.navigate(R.id.action_startFragment_to_listFragment);
                                 } else if(!user.isEmailVerified()) {
                                     showAlertDialog();
                                     progressBar.setVisibility(View.INVISIBLE);
                                     login_btn.setEnabled(true);
+                                    register_now_btn.setEnabled(true);
                                     firebaseAuth.signOut();
                                 }
                             } else {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 login_btn.setEnabled(true);
+                                register_now_btn.setEnabled(true);
 
                                 if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                     logEmailLayout.setError(null);

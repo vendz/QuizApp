@@ -140,15 +140,8 @@ public class ProfileFragment extends Fragment {
                         Intent data = result.getData();
                         Uri imageUri = data.getData();
                         profileImage.setImageURI(imageUri);
-                        String path = getPathFromUri(imageUri);
                     }
                 }
             }
     );
-
-    private String getPathFromUri(Uri imageUri) {
-        File file = new File(imageUri.getPath());//create path from uri
-        final String[] split = file.getPath().split(":");//split the path.
-        return split[1];
-    }
 }

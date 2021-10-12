@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -246,6 +247,11 @@ public class QuizFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.quiz_next_btn:
                 if(currentQuestion == totalQuestions) {
+                    if(next_btn.getText() == "Submit Results") {
+                        next_btn.setEnabled(false);
+                        close_btn.setEnabled(false);
+                        Toast.makeText(getContext(), "Submitting Results...", Toast.LENGTH_SHORT).show();
+                    }
                     submitResults();
                 } else {
                     currentQuestion++;

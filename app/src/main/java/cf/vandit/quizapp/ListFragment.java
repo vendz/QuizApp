@@ -28,9 +28,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
 
@@ -104,6 +110,46 @@ public class ListFragment extends Fragment implements QuizListAdapter.OnQuizList
                     }
                 });
                 swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()) {
+                    String token = task.getResult();
+
+                    DocumentReference documentReference = firebaseFirestore.collection("users").document(firebaseAuth.getCurrentUser().getEmail());
+                    documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot documentSnapshot = task.getResult();
+                                if(documentSnapshot.exists()) {
+                                    boolean is_admin = (boolean) documentSnapshot.get("is_admin");
+                                    String name = null;
+                                    try {
+                                        name = documentSnapshot.get("name").toString();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    // adding user data to local database
+                                    SharedPreferences preferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = preferences.edit();
+
+                                    editor.putString("email", user.getEmail());
+                                    editor.putString("token", token);
+                                    editor.putBoolean("is_admin", is_admin);
+                                    editor.putString("name", name);
+
+                                    editor.apply();
+                                }
+                            }
+                        }
+                    });
+                }
             }
         });
     }
