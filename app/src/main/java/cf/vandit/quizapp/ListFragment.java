@@ -129,20 +129,29 @@ public class ListFragment extends Fragment implements QuizListAdapter.OnQuizList
                                 if(documentSnapshot.exists()) {
                                     boolean is_admin = (boolean) documentSnapshot.get("is_admin");
                                     String name = null;
-                                    try {
-                                        name = documentSnapshot.get("name").toString();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
+                                    String imageURL = null;
+                                    boolean image_exists = false;
 
                                     // adding user data to local database
                                     SharedPreferences preferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = preferences.edit();
 
+                                    try {
+                                        name = documentSnapshot.get("name").toString();
+                                        image_exists = (boolean)documentSnapshot.get("image_exists");
+                                        if(image_exists) {
+                                            imageURL = documentSnapshot.get("profile_pic").toString();
+                                            editor.putString("imageURL", imageURL);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
                                     editor.putString("email", user.getEmail());
                                     editor.putString("token", token);
                                     editor.putBoolean("is_admin", is_admin);
                                     editor.putString("name", name);
+                                    editor.putBoolean("image_exists", image_exists);
 
                                     editor.apply();
                                 }

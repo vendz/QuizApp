@@ -25,7 +25,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,6 +38,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -103,10 +103,12 @@ public class ProfileFragment extends Fragment {
 
         boolean image_exists = preferences.getBoolean("image_exists", false);
         if(image_exists){
-            Glide.with(getContext())
+
+            Picasso.get()
                     .load(preferences.getString("imageURL", ""))
                     .centerCrop()
-                    .placeholder(R.drawable.ic_person)
+                    .resize(1000, 1000)
+                    .placeholder(R.drawable.ic_account_circle)
                     .into(profileImage);
         }
 
@@ -185,7 +187,12 @@ public class ProfileFragment extends Fragment {
                         editor.putString("imageURL", uri.toString());
                         editor.putBoolean("image_exists", true);
                         editor.apply();
-                        profileImage.setImageURI(imageUri);
+                        Picasso.get()
+                                .load(uri.toString())
+                                .centerCrop()
+                                .resize(200, 200)
+                                .placeholder(R.drawable.ic_account_circle)
+                                .into(profileImage);
                         progressDialog.dismiss();
                     }
                 });
