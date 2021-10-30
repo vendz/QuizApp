@@ -2,22 +2,19 @@ package cf.vandit.quizapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -25,19 +22,26 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
 import java.util.HashMap;
+import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -45,10 +49,11 @@ public class ProfileFragment extends Fragment {
 
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
     private Toolbar toolbar;
     private CircleImageView profileImage;
     private FloatingActionButton floatingActionButton;
-    private LinearLayout nameLayout;
     private ImageButton nameBtn;
     private TextView nameText;
     private TextView emailText;
@@ -72,6 +77,8 @@ public class ProfileFragment extends Fragment {
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
 
         preferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -79,7 +86,6 @@ public class ProfileFragment extends Fragment {
         toolbar = view.findViewById(R.id.profile_toolbar);
         profileImage = view.findViewById(R.id.profile_image);
         floatingActionButton = view.findViewById(R.id.profile_fab);
-        nameLayout = view.findViewById(R.id.ln_name);
         nameBtn = view.findViewById(R.id.edit_name_icon);
         nameText = view.findViewById(R.id.profile_name);
         emailText = view.findViewById(R.id.tv_email);
@@ -94,6 +100,15 @@ public class ProfileFragment extends Fragment {
 
         emailText.setText(preferences.getString("email", "Your Email"));
         nameText.setText(preferences.getString("name", "Your Name"));
+
+        boolean image_exists = preferences.getBoolean("image_exists", false);
+        if(image_exists){
+            Glide.with(getContext())
+                    .load(preferences.getString("imageURL", ""))
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_person)
+                    .into(profileImage);
+        }
 
         nameBtn.setOnClickListener(view1 -> {
             AlertDialog.Builder nameDialog = new AlertDialog.Builder(getActivity());
@@ -139,9 +154,53 @@ public class ProfileFragment extends Fragment {
                     if(result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         Uri imageUri = data.getData();
-                        profileImage.setImageURI(imageUri);
+                        uploadPicture(imageUri);
                     }
                 }
             }
     );
+
+    private void uploadPicture(Uri imageUri){
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.show();
+
+        final String randomName = UUID.randomUUID().toString();
+
+        // Create a reference to profile image
+        StorageReference storageRef = storageReference.child("profile_images/" + randomName);
+
+        storageRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        HashMap<String, Object> imageMap = new HashMap<>();
+                        imageMap.put("profile_pic", uri.toString());
+                        imageMap.put("image_exists", true);
+                        firebaseFirestore.collection("users").document(firebaseAuth.getCurrentUser().getEmail()).set(imageMap, SetOptions.merge());
+                        SharedPreferences preferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+
+                        editor.putString("imageURL", uri.toString());
+                        editor.putBoolean("image_exists", true);
+                        editor.apply();
+                        profileImage.setImageURI(imageUri);
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                double progressPercent = (100.00 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                progressDialog.setMessage("Uploading " + (int)progressPercent + "%");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getActivity(), "Upload unsuccessful. Please try later...", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

@@ -42,6 +42,7 @@
         <entry key="app/src/main/res/layout/fragment_details.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_list.xml" value="0.24380649716875735" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_new_quiz.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_quiz.xml" value="0.29214343615373806" />
         <entry key="app/src/main/res/layout/fragment_register.xml" value="0.25" />
