@@ -204,6 +204,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                                             new_user.put("email", user_email);
                                             new_user.put("token", token[0]);
                                             new_user.put("is_admin", false);
+                                            new_user.put("image_exists", false);
 
                                             firebaseFirestore.collection("users").document(user.getEmail()).set(new_user);
                                         }
