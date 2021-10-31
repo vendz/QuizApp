@@ -1,10 +1,10 @@
 # QuizApp
 A firestore based quiz app with firebase authentication
 
-| Login Screen | Main Screen |
-|--------------|-------------|
-| ![vendz](https://i.imgur.com/87SRVeE.jpg) | ![vendz](https://i.imgur.com/KLnEXk9.jpg) |
+| Login Screen | Main Screen | Profile Screen |
+|--------------|-------------| -------------- |
+| ![vendz](https://i.imgur.com/60IOlxt.jpg) | ![vendz](https://i.imgur.com/6YyczIS.jpg) | ![vendz](https://i.imgur.com/UkfTw6Z.jpg) |
 
 | Details Screen | Quiz Screen | Results Theme |
 | -------------- | ----------- | ------------- |
-| ![vendz](https://i.imgur.com/hV0ujGF.jpg) | ![vendz](https://i.imgur.com/urnYXDW.jpg) | ![vendz](https://i.imgur.com/5GYLMtR.jpg) |
+| ![vendz](https://i.imgur.com/QPdCtmo.jpg) | ![vendz](https://i.imgur.com/Wf9lNnu.jpg) | ![vendz](https://i.imgur.com/bilNktZ.jpg) |

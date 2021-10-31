@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -41,6 +42,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -60,6 +62,7 @@ public class ProfileFragment extends Fragment {
     private ImageButton nameBtn;
     private TextView nameText;
     private TextView emailText;
+    private LinearProgressIndicator progressIndicator;
     private SharedPreferences preferences;
 
     public ProfileFragment() {
@@ -92,6 +95,7 @@ public class ProfileFragment extends Fragment {
         nameBtn = view.findViewById(R.id.edit_name_icon);
         nameText = view.findViewById(R.id.profile_name);
         emailText = view.findViewById(R.id.tv_email);
+        progressIndicator = view.findViewById(R.id.profile_loading);
 
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -117,13 +121,21 @@ public class ProfileFragment extends Fragment {
 
         boolean image_exists = preferences.getBoolean("image_exists", false);
         if(image_exists){
-
+            progressIndicator.setVisibility(View.VISIBLE);
             Picasso.get()
                     .load(preferences.getString("imageURL", ""))
                     .centerCrop()
                     .resize(1000, 1000)
                     .placeholder(R.drawable.ic_account_circle)
-                    .into(profileImage);
+                    .into(profileImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            progressIndicator.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {}
+                    });
         }
 
         nameBtn.setOnClickListener(view1 -> {
@@ -204,10 +216,18 @@ public class ProfileFragment extends Fragment {
                         Picasso.get()
                                 .load(uri.toString())
                                 .centerCrop()
-                                .resize(200, 200)
-                                .placeholder(R.drawable.ic_account_circle)
-                                .into(profileImage);
+                                .resize(1000, 1000)
+                                .into(profileImage, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        progressIndicator.setVisibility(View.GONE);
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {}
+                                });
                         progressDialog.dismiss();
+                        progressIndicator.setVisibility(View.VISIBLE);
                     }
                 });
             }
