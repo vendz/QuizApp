@@ -53,13 +53,13 @@
         android:textAlignment="center"
         android:textColor="@color/red"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/logEmailInputLayout"
+        app:layout_constraintBottom_toTopOf="@+id/quizName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_title" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/logEmailInputLayout"
+        android:id="@+id/quizName"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
         android:hint="Email">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/logEmailInputField"
+            android:id="@+id/quizNameInputField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
@@ -104,7 +104,7 @@
         app:hintTextColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logEmailInputLayout"
+        app:layout_constraintTop_toBottomOf="@+id/quizName"
         app:startIconDrawable="@drawable/ic_lock"
         app:startIconTint="@color/white"
         app:errorEnabled="true"

@@ -44,7 +44,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_more_verticle"
-                app:tint="@color/light_grey"/>
+                app:tint="@color/light_grey" />
 
         </RelativeLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -78,5 +78,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBar" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

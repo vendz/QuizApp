@@ -51,6 +51,9 @@
             app:destination="@id/profileFragment"
             app:enterAnim="@anim/slide_in_right"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_listFragment_to_newQuizFragment"
+            app:destination="@id/newQuizFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
@@ -147,4 +150,9 @@
         android:name="cf.vandit.quizapp.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/newQuizFragment"
+        android:name="cf.vandit.quizapp.NewQuizFragment"
+        android:label="fragment_new_quiz"
+        tools:layout="@layout/fragment_new_quiz" />
 </navigation>

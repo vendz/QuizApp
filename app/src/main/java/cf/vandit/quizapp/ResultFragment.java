@@ -11,6 +11,7 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,12 +21,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.mikhaellopez.circularprogressbar.CircularProgressBar;
+import com.plattysoft.leonids.ParticleSystem;
 
 public class ResultFragment extends Fragment {
 
     private TextView correctAnswers, incorrectAnswers, missedAnswers, percentage_view;
     private Button home_btn;
-    private ProgressBar progressBar;
+    private CircularProgressBar progressBar;
 
     private String quizID;
 
@@ -97,7 +100,25 @@ public class ResultFragment extends Fragment {
                         Long percent = (correct * 100) / total;
 
                         percentage_view.setText(percent + "%");
-                        progressBar.setProgress(percent.intValue());
+                        progressBar.setProgressWithAnimation(percent.intValue(), 700);
+
+                        if(percent == 100) {
+                            new ParticleSystem(getActivity(), 130, R.drawable.confeti2, 1000)
+                                    .setSpeedRange(0.2f, 0.5f)
+                                    .setScaleRange(0.7f, 1.3f)
+                                    .setRotationSpeedRange(90, 180)
+                                    .setAcceleration(0.00013f, 90)
+                                    .setFadeOut(200, new AccelerateInterpolator())
+                                    .emit(getActivity().findViewById(R.id.bottom_left_emitter), 130, 1000);
+
+                            new ParticleSystem(getActivity(), 130, R.drawable.confeti3, 1000)
+                                    .setSpeedRange(0.2f, 0.5f)
+                                    .setScaleRange(0.7f, 1.3f)
+                                    .setRotationSpeedRange(90, 180)
+                                    .setAcceleration(0.00013f, 90)
+                                    .setFadeOut(200, new AccelerateInterpolator())
+                                    .emit(getActivity().findViewById(R.id.bottom_right_emitter), 130, 1000);
+                        }
                     }
                 }
             }

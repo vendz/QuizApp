@@ -19,7 +19,7 @@
 
     <style name="SplashScreen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/background_splash_screen</item>
-        <item name="statusBarBackground">@android:color/transparent</item>
+        <item name="statusBarBackground">@color/logo_color</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 

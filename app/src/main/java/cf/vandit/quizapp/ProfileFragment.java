@@ -195,7 +195,7 @@ public class ProfileFragment extends Fragment {
         final String randomName = UUID.randomUUID().toString();
 
         // Create a reference to profile image
-        StorageReference storageRef = storageReference.child("profile_images/" + randomName);
+        StorageReference storageRef = storageReference.child("profile_images/" + firebaseAuth.getCurrentUser().getEmail() + "/" + randomName);
 
         storageRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override

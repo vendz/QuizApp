@@ -63,4 +63,10 @@ dependencies {
 
     // profile image dependency
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //circular progressbar
+    implementation 'com.mikhaellopez:circularprogressbar:1.0.0'
+
+    // confetti
+    implementation 'com.plattysoft.leonids:LeonidsLib:1.3.2'
 }

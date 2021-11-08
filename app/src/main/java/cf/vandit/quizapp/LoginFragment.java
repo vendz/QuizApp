@@ -1,9 +1,7 @@
 package cf.vandit.quizapp;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -38,10 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 public class LoginFragment extends Fragment implements View.OnClickListener{
 
@@ -81,9 +76,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         navController = Navigation.findNavController(view);
 
         feedbackText = view.findViewById(R.id.start_feedback_text);
-        logEmail = view.findViewById(R.id.logEmailInputField);
+        logEmail = view.findViewById(R.id.quizNameInputField);
         logPassword = view.findViewById(R.id.logPasswordInputField);
-        logEmailLayout = view.findViewById(R.id.logEmailInputLayout);
+        logEmailLayout = view.findViewById(R.id.quizName);
         logPasswordLayout = view.findViewById(R.id.logPasswordInputLayout);
         login_btn = view.findViewById(R.id.login_Button);
         register_now_btn = view.findViewById(R.id.register_now_btn);
@@ -139,6 +134,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             public void afterTextChanged(Editable editable) {
                 if(!TextUtils.isEmpty(logPassword.getText())) {
                     if(logPasswordLayout.getError() == getString(R.string.empty_password_error)) {
+                        logPasswordLayout.setError(null);
+                    } else if(logPasswordLayout.getError() == "Incorrect Password") {
                         logPasswordLayout.setError(null);
                     }
                 }
